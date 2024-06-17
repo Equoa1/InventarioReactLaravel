@@ -30,16 +30,21 @@ export function Tables({ productId }) {
     try {
       const response = await axios.post('http://127.0.0.1:8000/products', formData);
       console.log('Response:', response.data);
-
-      // Actualiza la lista de productos en el estado
-      setAuthorsTableData(prevData => [...prevData, response.data]);
-
+  
+      
+      const updatedData = await fetchAuthorsTableData();
+      setAuthorsTableData(updatedData);
+  
+      
       handleOpen();
+      setFormData({ name: '', description: '', quantity: '', price: '' });
     } catch (error) {
       console.error('Error adding product:', error);
       console.log('Error details:', error.response);
     }
   };
+  
+  
 
   const handleEditDialogOpen = () => setEditDialogOpen(true);
   const handleEditDialogClose = () => {
@@ -59,7 +64,7 @@ export function Tables({ productId }) {
       const response = await axios.put(`http://127.0.0.1:8000/products/${editFormData.id}`, editFormData);
       console.log('Response:', response.data);
 
-      // Actualiza la lista de productos en el estado
+      
       setAuthorsTableData(prevData => prevData.map(product => 
         product.id === editFormData.id ? { ...editFormData } : product
       ));
@@ -74,7 +79,7 @@ export function Tables({ productId }) {
   const handleDeleteProduct = async (id) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/products/${id}`);
-      // Actualiza la lista de productos en el estado
+      
       setAuthorsTableData(prevData => prevData.filter(product => product.id !== id));
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -142,7 +147,7 @@ export function Tables({ productId }) {
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-semibold text-blue-gray-600">
-                        {"$ " + price}
+                        {price}
                       </Typography>
                     </td>
                     <td className={className}>
@@ -249,7 +254,7 @@ export function Tables({ productId }) {
           </div>
         </DialogBody>
         <DialogFooter>
-        <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+          <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
             <span>Cancel</span>
           </Button>
           <Button variant="gradient" color="green" onClick={handleSubmit}>
